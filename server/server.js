@@ -8,7 +8,7 @@ const PORT = 3000;
 const userController = require('./userController.js');
 const cookieController = require('./cookieController.js');
 
-//app.use(express.json()); //what is thisused for?
+//app.use(express.json()); //what is this used for?
 app.use(express.urlencoded({extended: true})); // extended: true gets rid of a warning for body-parser
 // without express.urlencoded(), req.body is just {}
 
@@ -16,9 +16,12 @@ app.get('/', (req, res) => {
   return res.status(200).sendFile(path.resolve(__dirname, '../index.html'));
 });
 
+// if a user comes to localhost:3000 and has a sessionCookie, need to reroute them to their homepage, not the sign up page
+// app.get('/', verifyUser, ..., redirect to /client)
+
 // handle request to signup button
 app.post('/', userController.createUser, cookieController.setSSIDCookie, (req, res) =>{
-  res.status(200).redirect('./client'); // no route setup for this yet
+  res.status(200).redirect('./client'); 
 })
 
 // UPDATE - add middle ware to check that user is signed in before seeing this page
