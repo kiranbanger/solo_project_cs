@@ -27,14 +27,14 @@ app.get('/client/signup', (req, res) => {
 })
 
 // handle a login post request
-app.post('/client/login', (req, res) => {
-  res.status(200);
+app.post('/client/login', userController.verifyUser, cookieController.setSSIDCookie,(req, res) => {
+  res.status(200).redirect('../client');
 })
 // if a user comes to localhost:3000 and has a sessionCookie, need to reroute them to their homepage, not the sign up page
 // app.get('/', verifyUser, ..., redirect to /client)
 
 // handle post request to signup
-app.post('/client/signup', userController.createUser, cookieController.setSSIDCookie, (req, res) =>{
+app.post('/client/signup', userController.createUser, cookieController.setSSIDCookie, (req, res) => {
   res.status(200).redirect('./client'); 
 })
 

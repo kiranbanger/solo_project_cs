@@ -27,9 +27,26 @@ userController.createUser = (req, res, next) => {
 
 userController.verifyUser = (req, res, next) => {
   console.log('request body: ', req.body);
-  console.log('request params: ', req.params);
-  console.log('cookies: ', req.cookies);
-  return next();
+  const { email, password } = req.body;
+  // query db for username
+  const q = `select id, hashcode from users where email = $1`
+  db.query(q, [email])
+  .then(dbRes => {
+    if(dbRes.rowCount !== 1){
+      return next({message: {err: 'Error signing in. Check email and password and try again, or sign up.'}, log: 'Error in userController.verifyUser - query returned unexpected results.'})
+    }
+    const hashToCheck = dbRes.rows[0].hashcode;
+    res.locals.userId = dbRes.rows[0].id;
+    return bcrypt.compare(password,hashToCheck)
+  })
+  .then( hashCheckResult => {
+    console.log(hashCheckResult)
+    if(!hashCheckResult){ // if false
+      return next({message: {err: 'Error signing in. Check email and password and try again, or sign up.'}, log: 'Error in userController.verifyUser - incorrect data'})
+    } // need to handle this better - redirect to login page?
+    return next();
+  })
+  .catch( error => next({message: {err: 'Error in userController.verifyUser!'}, log: `Error details: ${error}`}) )
 }
 
 module.exports = userController;
