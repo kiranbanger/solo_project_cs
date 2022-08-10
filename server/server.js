@@ -6,6 +6,7 @@ const PORT = 3000;
 
 
 const userController = require('./userController.js');
+const cookieController = require('./cookieController.js');
 
 //app.use(express.json()); //what is thisused for?
 app.use(express.urlencoded({extended: true})); // extended: true gets rid of a warning for body-parser
@@ -16,14 +17,18 @@ app.get('/', (req, res) => {
 });
 
 // handle request to signup button
-app.post('/', userController.createUser,(req, res) =>{
-  res.sendStatus(200);
+app.post('/', userController.createUser, cookieController.setSSIDCookie, (req, res) =>{
+  res.status(200).redirect('./client'); // no route setup for this yet
 })
-// handle rquest to login button
+
+// UPDATE - add middle ware to check that user is signed in before seeing this page
+app.get('/client', (req,res) => {
+  return res.status(200).sendFile(path.resolve(__dirname, '../client/userHomepage.html'));
+})
 
 
 // catch all route handler
-app.use( (req, res) => res.status(404).send('We cannot find th page you are looking for.'))
+app.use( (req, res) => res.status(404).send('We cannot find the page you are looking for.'))
 
 
 // global error handler
