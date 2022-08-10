@@ -25,4 +25,11 @@ userController.createUser = (req, res, next) => {
 
 }
 
+userController.verifyUser = (req, res, next) => {
+  console.log('request body: ', req.body);
+  console.log('request params: ', req.params);
+  console.log('cookies: ', req.cookies);
+  return next();
+}
+
 module.exports = userController;

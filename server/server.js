@@ -16,13 +16,29 @@ app.get('/', (req, res) => {
   return res.status(200).sendFile(path.resolve(__dirname, '../index.html'));
 });
 
+// handle loading the log in page
+app.get('/client/login', (req, res) => {
+  res.status(200).sendFile(path.resolve(__dirname, '../client/login.html'));
+})
+
+// handle loading the sign up page
+app.get('/client/signup', (req, res) => {
+  res.status(200).sendFile(path.resolve(__dirname, '../client/signup.html'));
+})
+
+// handle a login post request
+app.post('/client/login', (req, res) => {
+  res.status(200);
+})
 // if a user comes to localhost:3000 and has a sessionCookie, need to reroute them to their homepage, not the sign up page
 // app.get('/', verifyUser, ..., redirect to /client)
 
-// handle request to signup button
-app.post('/', userController.createUser, cookieController.setSSIDCookie, (req, res) =>{
+// handle post request to signup
+app.post('/client/signup', userController.createUser, cookieController.setSSIDCookie, (req, res) =>{
   res.status(200).redirect('./client'); 
 })
+
+
 
 // UPDATE - add middle ware to check that user is signed in before seeing this page
 app.get('/client', (req,res) => {
