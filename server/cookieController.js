@@ -7,13 +7,15 @@ cookieController.setSSIDCookie = (req, res, next) => {
   //console.log('in setssidcookie.');
   const { userId } = res.locals;
 
-  console.log('userid: ', userId);
+  //console.log('userid: ', userId);
   jwt.sign({user_id: userId},secret, {expiresIn: '1h'},(err, token) => {
     if(err){
       return next({message: {err: 'Error in userController.createUser.'}, log: `Problem creating token: ${err}`})
     }
     //console.log('JWT token: ', token)
     res.cookie('sessionCookie',token)
+    res.locals.authed = true;
+    console.log('user: ', res.locals.userId, ' is authed? ', res.locals.authed)
     return next()
   })
 }
@@ -26,6 +28,8 @@ cookieController.verifyToken = (req, res, next) => {
     }
     console.log(decoded)
     res.locals.userId = decoded.user_id;
+    res.locals.authed = true;
+    console.log('user: ', res.locals.userId, ' is authed? ', res.locals.authed)
     return next()
   })
 }

@@ -39,15 +39,21 @@ app.post('/client/login', userController.verifyUser, cookieController.setSSIDCoo
 
 // handle post request to signup
 app.post('/client/signup', userController.createUser, cookieController.setSSIDCookie, (req, res) => {
-  res.status(200).redirect('./client'); 
+  res.status(200).redirect('../client'); 
 })
 
+// handle a fetch request to get user specific data, whch will then display on userHomepage
 app.get('/getdata', cookieController.verifyToken, dataController.getPageData,(req, res) => {
-  res.status(200).json({})
+  res.status(200).json(res.locals.eventData);
 })
 
 // UPDATE - add middle ware to check that user is signed in before seeing this page
 app.get('/client', (req,res) => {
+  console.log('in server - user: ', res.locals.userId, ' is authed? ', res.locals.authed)
+  
+  if(!res.locals.authed) {
+    return res.status(403).send('You do not have access to this page.');
+  } 
   return res.status(200).sendFile(path.resolve(__dirname, '../client/userHomepage.html'));
 })
 

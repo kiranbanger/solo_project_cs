@@ -26,7 +26,7 @@ userController.createUser = (req, res, next) => {
 }
 
 userController.verifyUser = (req, res, next) => {
-  console.log('request body: ', req.body);
+  //console.log('request body: ', req.body);
   const { email, password } = req.body;
   // query db for username
   const q = `select id, hashcode from users where email = $1`
@@ -40,7 +40,7 @@ userController.verifyUser = (req, res, next) => {
     return bcrypt.compare(password,hashToCheck)
   })
   .then( hashCheckResult => {
-    console.log(hashCheckResult)
+    //console.log(hashCheckResult)
     if(!hashCheckResult){ // if false
       return next({message: {err: 'Error signing in. Check email and password and try again, or sign up.'}, log: 'Error in userController.verifyUser - incorrect data'})
     } // need to handle this better - redirect to login page?
