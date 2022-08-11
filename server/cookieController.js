@@ -22,6 +22,7 @@ cookieController.setSSIDCookie = (req, res, next) => {
 
 cookieController.verifyToken = (req, res, next) => {
   const { sessionCookie } = req.cookies;
+  if(!sessionCookie){return next()}
   jwt.verify(sessionCookie, secret, (err, decoded) => {
     if(err){
       return next({message: {err: 'Error in userController.verifyToken.'}, log: `Problem verifying token: ${err}`})

@@ -16,7 +16,10 @@ app.use(express.urlencoded({extended: true})); // extended: true gets rid of a w
 app.use(cookieParser());
 app.use(express.static('client'));
 
-app.get('/', (req, res) => {
+app.get('/', cookieController.verifyToken, (req, res) => {
+  if(res.locals.authed){
+    return res.redirect('../client')
+  }
   return res.status(200).sendFile(path.resolve(__dirname, '../index.html'));
 });
 
@@ -50,13 +53,15 @@ app.get('/getdata', cookieController.verifyToken, dataController.getPageData,(re
 // UPDATE - add middle ware to check that user is signed in before seeing this page
 app.get('/client', (req,res) => {
   console.log('in server - user: ', res.locals.userId, ' is authed? ', res.locals.authed)
-  
-  if(!res.locals.authed) {
-    return res.status(403).send('You do not have access to this page.');
-  } 
+  // if(!res.locals.authed) {
+  //   return res.status(403).send('You do not have access to this page.');
+  // } 
   return res.status(200).sendFile(path.resolve(__dirname, '../client/userHomepage.html'));
 })
 
+app.get('/logout', (req, res) => {
+  res.clearCookie('sessionCookie').send('Cookies have been cleared.').status(200)
+})
 
 // catch all route handler
 app.use( (req, res) => res.status(404).send('We cannot find the page you are looking for.'))
